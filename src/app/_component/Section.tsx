@@ -9,7 +9,7 @@ export default function Section() {
       <span>5</span>
       <button
         onClick={() => {
-          asd.setPage(1);
+          asd.setState(() => ({ page: 1 }));
         }}
       >
         이동

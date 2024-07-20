@@ -1,19 +1,5 @@
-import { useCtx } from "./context";
+import { PropsWithChildren } from "react";
 
-export default function Section() {
-  const asd = useCtx();
-  console.log("render");
-
-  return (
-    <section className="bg-red-300 h-[100vh]">
-      <span>5</span>
-      <button
-        onClick={() => {
-          asd.setPage(1);
-        }}
-      >
-        이동
-      </button>
-    </section>
-  );
+export default function Section({ children }: PropsWithChildren) {
+  return <section className="bg-red-300 h-[100vh]">{children}</section>;
 }

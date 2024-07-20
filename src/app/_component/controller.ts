@@ -3,20 +3,36 @@ import { Option } from "./type";
 import { deepCopy } from "../_lib/deepCopy";
 
 export class Controller {
-  durationTime = 1000;
+  initiallize = false;
 
-  state = {
+  private state = {
+    durationTime: 1000,
     page: 1,
-    maxPage: 5,
+    heights: [] as number[],
   };
 
   constructor(
     private renderer: Dispatch<SetStateAction<number>>,
     option?: Option
-  ) {}
+  ) {
+    this.reSize = this.reSize.bind(this);
+  }
+
+  static getChildHeights(childrens: HTMLElement[]) {
+    return childrens.map((child) => child.offsetTop);
+  }
+
+  init({ heights }: Partial<typeof this.state>) {
+    if (this.initiallize) return;
+    // 리액트가 마운트 되었을 때 실행
+    this.initiallize = true;
+    this.setState(() => ({
+      heights,
+    }));
+  }
 
   reRender() {
-    this.renderer((prev) => prev + 1);
+    this.renderer((prev) => (prev > 10000 ? 0 : prev + 1));
   }
 
   setState(cb: (state: typeof this.state) => Partial<typeof this.state>) {
@@ -34,12 +50,32 @@ export class Controller {
 
   nextPage() {
     this.setState((state) => {
-      if (state.page >= state.maxPage) return { page: state.maxPage };
+      if (state.page >= this.state.heights.length)
+        return { page: this.state.heights.length };
       return { page: state.page + 1 };
+    });
+  }
+
+  reSize(heights: number[]) {
+    this.setState(() => {
+      return { heights };
     });
   }
 
   getState() {
     return deepCopy(this.state);
+  }
+
+  getHeight() {
+    const heights = this.state.heights;
+    const idx = this.state.page - 1;
+    console.log("heights", heights);
+    console.log("idx", idx);
+    return heights[idx] || heights.at(-1) || 0;
+  }
+
+  getTrasform() {
+    const height = this.getHeight();
+    return `translate3d(0, ${height}px, 0)`;
   }
 }

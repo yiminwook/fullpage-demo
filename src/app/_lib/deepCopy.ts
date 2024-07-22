@@ -27,5 +27,3 @@ const obj = {
 };
 
 const t = deepCopy(obj);
-
-console.log(obj === t); // false
